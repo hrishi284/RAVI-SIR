@@ -1,0 +1,51 @@
+namespace DAL;
+using BOL;
+using MySql.Data.MySqlClient;
+using System.Collections.Generic;
+public static class HRDBManager{
+
+    public static string conString=@"server=localhost;port=3306;user=root; password=password;database=transflower";       
+    public  static List<Department> GetAllDepartments(){
+            List<Department> allDepartments=new List<Department>();
+            //database connectivity code
+            //Connected Data Access Mode
+            //MySqlConnection  : establishing connection
+            //MySqlCommand      : query execution
+            //MySqlDataReader   : result of query to be catured after processing query
+            MySqlConnection con=new MySqlConnection();
+            con.ConnectionString=conString;
+            try{
+                con.Open();
+                //fire query to database
+                MySqlCommand cmd=new MySqlCommand();
+                cmd.Connection=con;
+                string query="SELECT * FROM departments";
+                cmd.CommandText=query;
+                MySqlDataReader reader=cmd.ExecuteReader();
+                while(reader.Read()){
+                    int id = int.Parse(reader["id"].ToString());
+                    string name = reader["name"].ToString();
+                    string location = reader["location"].ToString();
+
+                    Department dept=new Department{
+                                                    Id = id,
+                                                    Name = name,
+                                                    Location = location
+                    };
+                    allDepartments.Add(dept);
+                }
+            }
+            catch(Exception ee){
+                Console.WriteLine(ee.Message);
+            }
+            finally{
+                    con.Close();
+            }
+
+            return allDepartments;
+    }
+
+
+   
+
+}
